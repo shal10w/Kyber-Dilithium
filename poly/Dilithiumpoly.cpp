@@ -18,7 +18,7 @@ void DilithiumPoly::to_poly(){
     k = 256;
     std::memcpy(polyarray , nttarray , 256*sizeof(int32_t));
     for(len = 1; len < 256; len <<= 1) {
-        for(start = 0; start < 256; start = j + len) {
+        for(start = 0; start < 256; start += 2* len) {
             zeta = -zetas[--k];
             for(j = start; j < start + len; ++j) {
                 t = polyarray[j];
@@ -27,6 +27,9 @@ void DilithiumPoly::to_poly(){
                 polyarray[j + len] = mod_mul(zeta , polyarray[j + len]);
             }
         }
+    }
+    for(int i = 0;i<256;i++){
+        polyarray[i] = mod_mul(polyarray[i] , 256);
     }
 }
 

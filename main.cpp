@@ -9,24 +9,12 @@ int main(){
         a[i] = (i*114351) % 8380417;
     }
     DilithiumPoly *poly = new DilithiumPoly(a , 0);
-    poly->to_ntt();
     
-    int cnt2=0, cnt1=0 , cnt_2=0;
-    int32_t temp;
-    for(int i = 0;i<256;i++){
-        temp = poly->nttarray[i];
-        if(temp > 2*poly->q){
-            cnt2++;
-            cout << "larger than 2q! " << temp << "  " << temp/poly->q << endl;
-            continue;
-        }
-        if(temp < -2*poly->q){
-            cnt_2++;
-            cout << "smaller than -2q! " << temp << "  " << temp/poly->q << endl;
-            continue;
-        }
+    poly->to_ntt();
+    poly->to_poly();
+    for(int i = 0 ; i < 10;i++){
+        cout << (i*114351) % 8380417 << " " << poly->polyarray[i] << endl;
     }
-    cout << cnt2 << "  " << cnt_2 << endl;
     return 0;
 }
 
