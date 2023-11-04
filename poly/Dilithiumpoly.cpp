@@ -1,7 +1,8 @@
 #include "Dilithiumpoly.h"
+#include <iostream>
 DilithiumPoly::DilithiumPoly(int32_t *array, int nttflag):Polynomial(array , nttflag){
-    q = 8380417 , qinv = 8396801 , R2modq = 6273035;
-    qbit = 24;
+    q = 8380417 , qinv = 58728449 , R2modq = 2365951;
+    Tbit = 32;
 }
 
 
@@ -11,10 +12,6 @@ void DilithiumPoly::mul(DilithiumPoly *res, DilithiumPoly *b){
     }
 }
 
-void DilithiumPoly::to_poly()
-{
-}
-/*
 void DilithiumPoly::to_poly(){
     unsigned int start, len, j, k;
     int32_t t, zeta;
@@ -24,27 +21,27 @@ void DilithiumPoly::to_poly(){
         for(start = 0; start < 256; start = j + len) {
             zeta = -zetas[--k];
             for(j = start; j < start + len; ++j) {
-                t = a[j];
-                a[j] = t + a[j + len];
-                a[j + len] = t - a[j + len];
-                a[j + len] = mod_mul(zeta , a[j + len]);
+                t = polyarray[j];
+                polyarray[j] = mod(t + polyarray[j + len]);
+                polyarray[j + len] = mod(t - polyarray[j + len]);
+                polyarray[j + len] = mod_mul(zeta , polyarray[j + len]);
             }
         }
     }
 }
-*/
+
 void DilithiumPoly::to_ntt(){
     unsigned int len, start, j, k;
     int32_t zeta, t;
     k = 0;
     std::memcpy(nttarray , polyarray , 256*sizeof(int32_t));
     for(len = 128; len > 0; len >>= 1) {
-        for(start = 0; start < 256; start = j + len){
+        for(start = 0; start < 256; start += 2*len){
             zeta = zetas[++k];
             for(j = start; j < start + len; ++j) {
                 t = mod_mul(zeta , nttarray[j + len]);
-                nttarray[j + len] = nttarray[j] - t;
-                nttarray[j] = nttarray[j] + t;
+                nttarray[j + len] = mod(nttarray[j] - t);
+                nttarray[j] = mod(nttarray[j] + t);
             }
         }
     }

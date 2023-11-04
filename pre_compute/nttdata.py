@@ -6,6 +6,8 @@ def nttdata(q , R , r):
     for i in range(256):
         pos = int(bin(i)[2:].rjust(8 , '0')[::-1] , 2)
         reslist[pos] = pow(r , i , q) * R % q
+        if reslist[pos] > q/2:
+            reslist[pos] -= q
     return reslist
 def printformat(alist):
     output = '{\n\t'
@@ -16,4 +18,4 @@ def printformat(alist):
     output += '};'
     print(output)
 
-printformat(nttdata(8380417 , 1<<24 , 1753))
+printformat(nttdata(8380417 , 1<<32 , 1753))

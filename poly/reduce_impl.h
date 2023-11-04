@@ -1,19 +1,14 @@
 #include <iostream>
 
 template <typename T,typename DT>
-T montgomery_reduce(DT a , T Qinv , T Q, int Rbit){
+T montgomery_reduce(DT a , T Qinv , T Q , int Tbit){
     // R = 2^k
     DT t;
     T u;
-    T R = (1 << Rbit) - 1;
-    u = ((a&R)*Qinv) & R;
-    std::cout << u << std::endl;
+    u = a*Qinv;
     t = (DT)u*Q;
-    std::cout << t << std::endl;
     t = a - t;
-    std::cout << t << std::endl;
-    t >>= Rbit;
-    std::cout << t << std::endl;
+    t >>= Tbit;
     return (T)t;
 }
 
@@ -27,18 +22,12 @@ T barrett_reduce(T a ,T q, T m , int kbit){
     return a;
 }
 template <typename T>
-T mod_plus(T a , T b , T q){
-    T res = a + b;
-    if(res > q){
-        return res - q;
+T simple_mod(T a , T q){
+    if(a > q){
+        return a - q;
     }
-    return res;
-}
-template <typename T>
-T mod_sub(T a , T b , T q){
-    T res = a - b;
-    if(res < 0){
-        return res + q;
+    if(a < -q){
+        return a + q;
     }
-    return res;
+    return a;
 }

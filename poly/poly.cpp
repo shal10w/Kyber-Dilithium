@@ -21,28 +21,28 @@ Polynomial<T , DT>::Polynomial(T *array, int nttflag):nttflag(nttflag){
     }
 }
 template <typename T, typename DT>
-void Polynomial<T,DT>::add(Polynomial *res , Polynomial *b){
+void Polynomial<T,DT>::poly_add(Polynomial *res , Polynomial *b){
     if(this->nttflag){
         for(int i = 0; i < 256 ; i++){
-            res->nttarray[i] = mod_plus(this->nttarray[i] , b->nttarray[i] , this->q);
+            res->nttarray[i] = mod(this->nttarray[i] + b->nttarray[i]);
         }
     }
     else{
         for(int i = 0 ; i < 256 ; i++){
-            res->polyarray[i] = mod_plus(this->polyarray[i] , b->polyarray[i] , this->q);
+            res->polyarray[i] = mod(this->polyarray[i] + b->polyarray[i]);
         }
     }
 }
 template <typename T, typename DT>
-void Polynomial<T,DT>::sub(Polynomial *res , Polynomial *b){
+void Polynomial<T,DT>::poly_sub(Polynomial *res , Polynomial *b){
     if(this->nttflag){
         for(int i = 0; i < 256 ; i++){
-            res->nttarray[i] = mod_sub<T>(this->nttarray[i] , b->nttarray[i] , this->q);
+            res->nttarray[i] = mod(this->nttarray[i] - b->nttarray[i]);
         }
     }
     else{
         for(int i = 0 ; i < 256 ; i++){
-            res->polyarray[i] = mod_sub<T>(this->polyarray[i] , b->polyarray[i] , this->q);
+            res->polyarray[i] = mod(this->polyarray[i] - b->polyarray[i]);
         }
     }
 }
@@ -69,27 +69,14 @@ void Polynomial<T,DT>::getpoly(T *reslist){
 }
 template <typename T, typename DT>
 T Polynomial<T,DT>::mod_mul(T a , T b){
-    return montgomery_reduce<T , DT>((DT)a * b , this->qinv , this->q , this->qbit);
+    return montgomery_reduce<T , DT>((DT)a * b , this->qinv , this->q , this->Tbit);
 }
 
 template <typename T, typename DT>
-T Polynomial<T, DT>::mod(T a){
-    
-    return T();
+T Polynomial<T, DT>::mod(T a)
+{
+    return simple_mod(a , this->q);
 }
-
-/*
-void Polynomial::mul(Polynomial *c){
-    if(this->nttflag == 0){
-        printf("Multiply forbidden");
-        return ;
-    }
-    for(int i = 0; i < 512 ; i++){
-        this->nttarray[i] *= c->nttarray[i];
-        this->nttarray[i] %= this->q;
-    }
-}
-*/
 
 template class Polynomial<int16_t , int32_t>;
 template class Polynomial<int32_t , int64_t>;
