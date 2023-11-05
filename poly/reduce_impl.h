@@ -23,10 +23,10 @@ T barrett_reduce(T a ,T q, T m , int kbit){
 }
 template <typename T>
 T simple_mod(T a , T q){
-    if(a > q){
+    if(a >= q){
         return a - q;
     }
-    if(a < -q){
+    if(a <= -q){
         return a + q;
     }
     return a;

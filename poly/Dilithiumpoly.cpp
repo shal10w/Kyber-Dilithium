@@ -1,5 +1,4 @@
 #include "Dilithiumpoly.h"
-#include "debug.h"
 DilithiumPoly::DilithiumPoly(int32_t *array, int nttflag,int montflag):
     Polynomial(array , nttflag , montflag){
     q = 8380417 , qinv = 58728449 , R2modq = 2365951;
