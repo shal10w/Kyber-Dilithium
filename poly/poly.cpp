@@ -2,7 +2,7 @@
 #include "reduce.h"
 
 template <typename T, typename DT>
-Polynomial<T , DT>::Polynomial(T *array, int nttflag):nttflag(nttflag){
+Polynomial<T , DT>::Polynomial(T *array, int nttflag , int montflag):nttflag(nttflag),montflag(montflag){
     if(nttflag == 0){
         if(array){
             std::memcpy(this->polyarray , array , 256*sizeof(T));
@@ -48,14 +48,36 @@ void Polynomial<T,DT>::poly_sub(Polynomial *res , Polynomial *b){
 }
 template <typename T, typename DT>
 void Polynomial<T,DT>::to_mont(){
-    for(int i = 0;i < 256;i++){
-        this->nttarray[i] = this->mod_mul(this->nttarray[i] , this->R2modq);
+    if(montflag == 1){
+        return ;
+    }
+    montflag = 1;
+    if(nttflag==0){
+        for(int i = 0;i < 256;i++){
+            this->polyarray[i] = this->mod_mul(this->polyarray[i] , this->R2modq);
+        }
+    }
+    else{
+        for(int i = 0;i < 256;i++){
+            this->nttarray[i] = this->mod_mul(this->nttarray[i] , this->R2modq);
+        }
     }
 }
 template <typename T, typename DT>
 void Polynomial<T,DT>::rev_mont(){
-    for(int i = 0;i < 256;i++){
-        this->nttarray[i] = this->mod_mul(this->nttarray[i] , 1);
+    if(montflag){
+        return ;
+    }
+    montflag = 0;
+    if(nttflag==0){
+        for(int i = 0;i < 256;i++){
+            this->polyarray[i] = this->mod_mul(this->polyarray[i] , 1);
+        }
+    }
+    else{
+        for(int i = 0;i < 256;i++){
+            this->nttarray[i] = this->mod_mul(this->nttarray[i] , 1);
+        }
     }
 }
 template <typename T, typename DT>

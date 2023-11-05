@@ -12,6 +12,7 @@ set(HEADERS
     poly.h
     reduce.h
     reduce_impl.h
+    debug.h
 )
 
 add_library (

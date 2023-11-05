@@ -39,8 +39,8 @@ static const int32_t zetas[256] = {
 
 class DilithiumPoly:public Polynomial<int32_t , int64_t>{
 public:
-    DilithiumPoly(int32_t *array , int mode);
-    void mul(DilithiumPoly *res , DilithiumPoly *b);
+    DilithiumPoly(int32_t *array , int nttflag,int montflag);
+    void mul(DilithiumPoly *a , DilithiumPoly *b);
     void to_poly();
     void to_ntt();
 };
