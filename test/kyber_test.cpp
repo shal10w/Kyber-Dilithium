@@ -13,14 +13,14 @@ int main(){
         a2[i] = i;
     }
     KyberPoly *poly1 = new KyberPoly(a1 , 0 , 0);
-    poly1->to_mont();
-    output(poly1->polyarray , "polyarray: ");
+    KyberPoly *poly2 = new KyberPoly(a2 , 0 , 0);
+    KyberPoly *poly3 = new KyberPoly(0 , 1 , 1);
     poly1->to_ntt();
+    poly2->to_ntt();
+    poly3->mul(poly1 , poly2);
     
-    output(poly1->nttarray , "nttarray: ");
-    poly1->to_poly();
-
-    output(poly1->polyarray , "polyarray: ");
+    poly3->to_poly();
+    output(poly3->polyarray , "2058*x^2 + 489*x + 2017:");
     return 0;
 }
 

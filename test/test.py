@@ -1,6 +1,6 @@
 from sage.all import *
 
-PR = PolynomialRing(Zmod(8380417) , "x")
+PR = PolynomialRing(Zmod(3329) , "x")
 x = PR.gens()[0]
 a1 = 0
 for i in range(256):

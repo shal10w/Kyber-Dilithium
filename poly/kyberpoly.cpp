@@ -7,7 +7,19 @@ KyberPoly::KyberPoly(int16_t *array, int nttflag , int montflag):
 }
 
 void KyberPoly::mul(KyberPoly *a, KyberPoly *b){
-
+    int16_t a1 , a2 , b1 , b2 , zeta;
+    for(int i = 0 ; i < 128;i++){
+        zeta = zetas[64+(i>>1)];
+        if(i&1 == 1){
+            zeta = -zeta;
+        }
+        a1 = a->nttarray[i*2];
+        a2 = a->nttarray[i*2+1];
+        b1 = b->nttarray[i*2];
+        b2 = b->nttarray[i*2+1];
+        this->nttarray[i*2] = mod(mod_mul(mod_mul(a2 , b2) , zeta) + mod_mul(a1,b1));
+        this->nttarray[i*2+1] = mod(mod_mul(a1 , b2) + mod_mul(a2 , b1));
+    }
 }
 
 void KyberPoly::to_poly(){
