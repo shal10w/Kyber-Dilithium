@@ -1,7 +1,7 @@
-#include "../poly/Dilithiumpoly.h"
-#include "../poly/poly.h"
+#include "../kernel/poly/Dilithiumpoly.h"
+#include "../kernel/poly/poly.h"
 #include <iostream>
-#include "../poly/debug.h"
+#include "../kernel/poly/debug.h"
 using namespace std;
 
 int main(){
