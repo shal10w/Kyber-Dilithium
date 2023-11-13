@@ -8,6 +8,7 @@ public:
     T* datavec[k];
     polyvec(T* vec[]);
     void mul(T*res , polyvec* rvalue);
+    ~polyvec();
 };
 
 

@@ -1,7 +1,7 @@
 #include <iostream>
 
 template <typename T,typename DT>
-T montgomery_reduce(DT a , T Qinv , T Q , int Tbit){
+inline T montgomery_reduce(DT a , T Qinv , T Q , int Tbit){
     // R = 2^k
     DT t;
     T u;
@@ -13,7 +13,7 @@ T montgomery_reduce(DT a , T Qinv , T Q , int Tbit){
 }
 
 template <typename T,typename DT>
-T barrett_reduce(T a ,T q, T m , int kbit){
+inline T barrett_reduce(T a ,T q, T m , int kbit){
     // m/2^kbit = 1/q , kbit = 2qbit+2
     DT t;
     t = m*a >> kbit;
@@ -22,7 +22,7 @@ T barrett_reduce(T a ,T q, T m , int kbit){
     return a;
 }
 template <typename T>
-T simple_mod(T a , T q){
+inline T simple_mod(T a , T q){
     if(a >= q){
         return a - q;
     }
