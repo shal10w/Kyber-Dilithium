@@ -1,11 +1,19 @@
 
-build(){
+
+bdmk(){
     mkdir build
     cd build
     cmake .. && make
-    cd .. && python ./setup.py build_ext
+    cd ..
+    cp -r ./kernel/vec ./build/kernel/vec
 }
-
+bdcy(){
+    python ./setup.py build_ext
+}
+build(){
+    bdmk
+    bdcy
+}
 clean(){
     rm -r build
 }

@@ -5,11 +5,12 @@
 #include "../poly/Dilithiumpoly.h"
 #include "../poly/Kyberpoly.h"
 
-template <typename T , int k>
+template <typename T>
 class polyvec{
 public:
-    T* datavec[k];
-    polyvec(T* vec[]);
+    T** datavec;
+    int k;
+    polyvec(T* vec[] , int k);
     void reset(int nttflag , int montflag);
     void mul(T*res , polyvec* rvalue);
     void add(polyvec *res , polyvec *rvalue);

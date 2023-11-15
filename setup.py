@@ -3,7 +3,8 @@ from Cython.Build import cythonize
 
 
 exts = [
-    Extension("Kyber_Dilithium.polynomial",["Kyber_Dilithium/polynomial.pyx"] , extra_link_args = ["build/poly/libpoly.a"]),
+    Extension("Kyber_Dilithium.polynomial",["Kyber_Dilithium/polynomial.pyx"] , extra_link_args = ["build/kernel/poly/libpoly.a"]),
+    Extension("Kyber_Dilithium.polyvec",["Kyber_Dilithium/polyvec.pyx"] , extra_link_args = ["build/kernel/poly/libpoly.a"])
 ]
 
 setup(

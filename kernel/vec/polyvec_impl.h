@@ -1,6 +1,7 @@
-#include "polyvec.h"
-template <typename T, int k>
-inline polyvec<T, k>::polyvec(T *vec[]){
+#include <stdlib.h>
+template <typename T>
+inline polyvec<T>::polyvec(T *vec[] , int k){
+    datavec = (T**)malloc(k*sizeof(T*));
     if(vec == NULL){
         for(int i = 0 ; i < k ;i++){
             datavec[i] = new T(0,1,1);
@@ -9,22 +10,20 @@ inline polyvec<T, k>::polyvec(T *vec[]){
     else{
         for(int i = 0 ; i < k ;i++){
             datavec[i] = vec[i];
-            if(vec[i]->nttflag != 1){
-                vec[i]->to_ntt();
-            }
         }
     }
+    this->k = k;
 }
 
-template <typename T, int k>
-inline void polyvec<T, k>::reset(int nttflag, int montflag){
+template <typename T>
+inline void polyvec<T>::reset(int nttflag, int montflag){
     for(int i = 0 ; i < k ; i++){
         this->datavec[i]->reset(nttflag , montflag);
     }
 }
 
-template <typename T, int k>
-inline void polyvec<T, k>::mul(T *res, polyvec *rvalue){
+template <typename T>
+inline void polyvec<T>::mul(T *res, polyvec *rvalue){
     T *mid = new T(0 , 1, 1);
     for(int i = 0 ; i < k;i++){
         mid->mul(this->datavec[i] , rvalue->datavec[i]);
@@ -32,29 +31,30 @@ inline void polyvec<T, k>::mul(T *res, polyvec *rvalue){
     }
     delete mid;
 }
-template <typename T, int k>
-inline void polyvec<T, k>::add(polyvec *res, polyvec *rvalue){
+template <typename T>
+inline void polyvec<T>::add(polyvec *res, polyvec *rvalue){
     for(int i = 0 ; i < k ; i++){
         this->datavec[i]->poly_add(res->datavec[i] , rvalue->datavec[i]);
     }
 }
-template <typename T, int k>
-inline void polyvec<T, k>::to_poly()
+template <typename T>
+inline void polyvec<T>::to_poly()
 {
     for(int i = 0 ; i < k ; i++){
         this->datavec[i]->to_poly();
     }
 }
-template <typename T, int k>
-inline void polyvec<T, k>::to_ntt(){
+template <typename T>
+inline void polyvec<T>::to_ntt(){
     for(int i = 0 ; i < k ; i++){
         this->datavec[i]->to_ntt();
     }
 }
-template <typename T, int k>
-inline polyvec<T, k>::~polyvec()
+template <typename T>
+inline polyvec<T>::~polyvec()
 {
     for(int i = 0;i<k;i++){
         delete datavec[i];
     }
+    delete datavec;
 }

@@ -2,12 +2,13 @@
 #define POLYMAT_H
 #include "polyvec.h"
 
-template <typename T , int k>
+template <typename T>
 class polymat{
 public:
-    polyvec<T , k> *veclist[k];    
-    polymat(polyvec<T,k> *veclist[]);
-    void right_mul(polyvec<T , k>*res , polyvec<T,k> *rvalue);
+    polyvec<T> **veclist;
+    int k; 
+    polymat(polyvec<T> *veclist[] , int k);
+    void right_mul(polyvec<T>*res , polyvec<T> *rvalue);
     void trans();
     ~polymat();
 

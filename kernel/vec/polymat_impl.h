@@ -1,20 +1,22 @@
-#include "polymat.h"
-template <typename T, int k>
-inline polymat<T, k>::polymat(polyvec<T,k> *veclist[]){
+#include <stdlib.h>
+template <typename T>
+inline polymat<T>::polymat(polyvec<T> *veclist[] , int k){
+    this->veclist = (polyvec<T>**)malloc(k*sizeof(polyvec<T>**));
     for(int i = 0;i<k;i++){
         this->veclist[i] = veclist[i];
     }
+    this->k = k;
 }
 
-template <typename T, int k>
-inline void polymat<T, k>::right_mul(polyvec<T, k> *res, polyvec<T, k> *rvalue){
+template <typename T>
+inline void polymat<T>::right_mul(polyvec<T> *res, polyvec<T> *rvalue){
     for(int i = 0 ; i < k ;i++){
         this->veclist[i]->mul(res->datavec[i] , rvalue);
     }
 }
 
-template <typename T, int k>
-inline void polymat<T, k>::trans(){
+template <typename T>
+inline void polymat<T>::trans(){
     T *temp;
     for(int i = 0; i < k-1;i++){
         for(int j = i+1; j < k ; j++){
@@ -25,8 +27,8 @@ inline void polymat<T, k>::trans(){
     }
 }
 
-template <typename T, int k>
-inline polymat<T, k>::~polymat(){
+template <typename T>
+inline polymat<T>::~polymat(){
     for(int i = 0;i<k;i++){
         delete veclist[i];
     }
