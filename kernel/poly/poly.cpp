@@ -21,7 +21,15 @@ Polynomial<T , DT>::Polynomial(T *array, int nttflag , int montflag):nttflag(ntt
     }
 }
 template <typename T, typename DT>
-void Polynomial<T,DT>::poly_add(Polynomial *res , Polynomial *b){
+void Polynomial<T, DT>::reset(int nttflag, int montflag){
+    std::memset(this->polyarray , 0 , 256*sizeof(T));
+    std::memset(this->nttarray , 0 , 256*sizeof(T));
+    this->nttflag = nttflag;
+    this->montflag = montflag;
+}
+template <typename T, typename DT>
+void Polynomial<T, DT>::poly_add(Polynomial *res, Polynomial *b)
+{
     if(this->nttflag){
         for(int i = 0; i < 256 ; i++){
             res->nttarray[i] = mod(this->nttarray[i] + b->nttarray[i]);
