@@ -1,12 +1,8 @@
 # distutils: language = c++
-from decl cimport KyberPoly as KyberPoly_c
-cimport numpy as cnp
-import numpy as np
-cnp.import_array()
+
 
 
 cdef class KyberPoly:
-    cdef KyberPoly_c *_core
     def __init__(self , numlist,int nttflag , int montflag):
         cdef cnp.ndarray[cnp.int16_t] temp
         if numlist == None:

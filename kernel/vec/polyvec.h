@@ -16,6 +16,7 @@ public:
     void add(polyvec *res , polyvec *rvalue);
     void to_poly();
     void to_ntt();
+    void plus_mod();
     ~polyvec();
 };
 
@@ -23,3 +24,4 @@ public:
 #include "polyvec_impl.h"
 
 #endif
+

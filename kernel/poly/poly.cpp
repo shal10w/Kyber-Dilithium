@@ -89,7 +89,25 @@ void Polynomial<T,DT>::rev_mont(){
     }
 }
 template <typename T, typename DT>
-void Polynomial<T,DT>::getpoly(T *reslist){
+void Polynomial<T, DT>::plus_mod(){
+    if(nttflag){
+        for(int i = 0; i < 256; i++){
+            if(this->nttarray[i] < 0){
+                this->nttarray[i] += this->q;
+            }
+        }
+    }
+    else{
+        for(int i = 0; i < 256; i++){
+            if(this->polyarray[i] < 0){
+                this->polyarray[i] += this->q;
+            }
+        }
+    }
+}
+template <typename T, typename DT>
+void Polynomial<T, DT>::getpoly(T *reslist)
+{
     if(this->nttflag){
         std::memcpy(reslist , this->nttarray , 256*sizeof(T));
     }

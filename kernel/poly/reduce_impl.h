@@ -1,4 +1,5 @@
 #include <iostream>
+#include "reduce.h"
 
 template <typename T,typename DT>
 inline T montgomery_reduce(DT a , T Qinv , T Q , int Tbit){

@@ -15,6 +15,7 @@ public:
     void poly_sub(Polynomial *res , Polynomial *b);
     void to_mont();
     void rev_mont();
+    void plus_mod();
     T mod_mul(T a , T b);
     T mod(T a);
     void getpoly(T *reslist);
