@@ -42,15 +42,17 @@ cdef list gen_vec(bytes seed):
         if temp2 < 3329 and reslen < 256:
             res.append(temp2)
             reslen += 1
-    print(pos)
     return res
 
 cdef list gen_mat(bytes seed ,int k):
     cdef list A
+    cdef list temp
     A = []
     for i in range(k):
+        temp = []
         for j in range(k):
-            A.append(gen_vec(seed+bytes([j,i])))
+            temp.append(gen_vec(seed+bytes([j,i])))
+        A.append(temp)
     return A
 
 
@@ -58,7 +60,7 @@ cdef list CBD(bytes seed , int eta):
     cdef list res, bufbits
     cdef int pos , a,b , bufnum
     res = []
-    buf = shake_256(seed).digest(eta*32)
+    buf = shake_256(seed).digest(eta*64)
     bufbits = BytesToBits(buf)
     for i in range(256):
         a = 0
@@ -115,4 +117,5 @@ cdef list Decompress(int q , list vec ,int d):
     res = []
     for i in vec:
         res.append(round(i*q/module))
+    return res
 

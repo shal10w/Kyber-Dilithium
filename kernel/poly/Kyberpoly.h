@@ -26,7 +26,7 @@ class KyberPoly:public Polynomial<int16_t , int32_t>{
 public:
     
     KyberPoly(int16_t *array , int nttflag , int montflag);
-    void mul(KyberPoly *a , KyberPoly *b);
+    void mul(KyberPoly *res , KyberPoly *b);
     void to_poly();
     void to_ntt();
 };

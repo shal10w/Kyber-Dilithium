@@ -17,7 +17,7 @@ int main(){
     KyberPoly *poly3 = new KyberPoly(0 , 1 , 1);
     poly1->to_ntt();
     poly2->to_ntt();
-    poly3->mul(poly1 , poly2);
+    poly1->mul(poly3 , poly2);
     
     poly3->to_poly();
     output(poly3->polyarray , "2058*x^2 + 489*x + 2017:");

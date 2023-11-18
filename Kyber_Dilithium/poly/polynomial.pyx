@@ -1,5 +1,5 @@
 # distutils: language = c++
-
+import numpy as np
 
 
 cdef class KyberPoly:
@@ -14,6 +14,18 @@ cdef class KyberPoly:
         self._core.poly_add(res._core , rvalue._core)
     def sub(self , KyberPoly res , KyberPoly rvalue):
         self._core.poly_sub(res._core , rvalue._core)
+    def mul(self , KyberPoly res , KyberPoly rvalue):
+        self._core.mul(res._core , rvalue._core)
+    def to_poly(self):
+        self._core.to_poly()
+    def to_ntt(self):
+        self._core.to_ntt()
+    @property
+    def nttarray(self):
+        return self._core.nttarray
+    @property
+    def polyarray(self):
+        return self._core.polyarray
     def __dealloc__(self):
         del self._core
     

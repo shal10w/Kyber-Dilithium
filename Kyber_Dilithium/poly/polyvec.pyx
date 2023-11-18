@@ -1,4 +1,6 @@
 # distutils: language = c++
+
+import numpy as np
 cdef Kybervecinit(polyvec_c[KyberPoly_c] **res ,int index, polylist , int k, int flag ):
     cdef KyberPoly_c ** a
     cdef cnp.ndarray[cnp.int16_t] temp
@@ -48,7 +50,7 @@ cdef class KyberMat:
         PyMem_Free(a)
     def mul(self , KyberVec res , KyberVec b):
         self._core.right_mul(res._core , b._core)
-    
+
     def trans(self):
         self._core.trans()
     def __dealloc__(self):

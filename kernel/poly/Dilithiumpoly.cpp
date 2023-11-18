@@ -6,12 +6,12 @@ DilithiumPoly::DilithiumPoly(int32_t *array, int nttflag,int montflag):
 }
 
 
-void DilithiumPoly::mul(DilithiumPoly *a, DilithiumPoly *b){
+void DilithiumPoly::mul(DilithiumPoly *res, DilithiumPoly *b){
     for(int i = 0 ;i < 256 ; i++){
-        this->nttarray[i] = mod_mul(a->nttarray[i] , b->nttarray[i]);
+        res->nttarray[i] = mod_mul(this->nttarray[i] , b->nttarray[i]);
     }
-    nttflag = 1;
-    montflag = 1;
+    res->nttflag = 1;
+    res->montflag = 1;
 }
 
 void DilithiumPoly::to_poly(){
