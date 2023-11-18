@@ -1,11 +1,24 @@
 from hashlib import *
 
-cdef vector[bool] BytesToBits(bytes B):
-    cdef vector[int] res
+cdef bytes BitsToBytes(list b):
+    cdef list res
+    cdef int temp
+    res = []
+    for i in range(len(b)//8):
+        temp = 0
+        for j in range(8):
+            temp += b[(i<<3)+j] << j
+        res.append(temp)
+    return bytes(res)
+cdef list BytesToBits(bytes B):
+    cdef list res
     cdef int a
     a = len(B)
+    res = []
     for i in range(a):
-        pass
+        for j in range(8):
+            res.append((B[i] >> j) & 1)
+    return res
 
 cdef list gen_vec(bytes seed):
     cdef int pos , reslen, magic_num
@@ -26,7 +39,7 @@ cdef list gen_vec(bytes seed):
         if temp1 < 3329:
             res.append(temp1)
             reslen+=1
-        if temp2 < 3329:
+        if temp2 < 3329 and reslen < 256:
             res.append(temp2)
             reslen += 1
     print(pos)
@@ -41,22 +54,65 @@ cdef list gen_mat(bytes seed ,int k):
     return A
 
 
-cdef list CBD(bytes seed ,int k, int eta):
-    cdef list res, and_list
-    cdef int pos , temp1,temp2 , bufnum
+cdef list CBD(bytes seed , int eta):
+    cdef list res, bufbits
+    cdef int pos , a,b , bufnum
     res = []
-    buf = shake_256(seed).digest(((eta*256)//(8*136)+1)*136)
-    pos = 0
-    and_list = [0xc0 ,0x30 , 0xc , 0x3]
+    buf = shake_256(seed).digest(eta*32)
+    bufbits = BytesToBits(buf)
     for i in range(256):
-        temp1 = 0
-        temp2 = 0
+        a = 0
+        b = 0
         for j in range(eta):
-            bufnum = (buf[pos>>2] & (and_list[pos&3]))>>((pos&3)<<1)
-            temp1 += bufnum>>1
-            temp2 += bufnum & 1
-        res.append(temp1 - temp2)
+            a += bufbits[2*eta*i+j]
+            b += bufbits[2*eta*i+eta+j]
+        res.append(a - b)
     return res
 
+cdef list Decode(bytes buf ,int bitlen):
+    cdef list res , bufbit
+    cdef int temp
+    res = []
+    bufbit = BytesToBits(buf)
+    for i in range(256):
+        temp = 0
+        for j in range(bitlen):
+            temp += bufbit[i*bitlen+j] << j
+        res.append(temp)
+    return res
 
+cdef bytes Encode(list polyarray , int bitlen):
+    cdef list midres
+    midres = []
+    for i in range(len(polyarray)):
+        for j in range(bitlen):
+            midres.append((polyarray[i] >> j)&1)
+    return BitsToBytes(midres)
+
+cdef list plus_mod(list array , int q):
+    cdef list res
+    res = []
+    for i in array:
+        if i > 0:
+            res.append(i)
+        else:
+            res.append(i+q)
+    return res
+
+cdef list Compress(int q , list vec ,int d):
+    cdef list res
+    cdef int module
+    module = 1<<d
+    res = []
+    for i in vec:
+        res.append(round(i*module / q) % module)
+    return res
+
+cdef list Decompress(int q , list vec ,int d):
+    cdef list res
+    cdef int module
+    module = 1<<d
+    res = []
+    for i in vec:
+        res.append(round(i*q/module))
 

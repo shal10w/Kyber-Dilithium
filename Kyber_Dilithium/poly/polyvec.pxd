@@ -2,6 +2,7 @@ from .decl cimport KyberPoly as KyberPoly_c
 from .decl cimport DilithiumPoly as DilithiumPoly_c
 from .decl cimport polyvec as polyvec_c
 from .decl cimport polymat as polymat_c
+from .polynomial cimport KyberPoly
 cimport numpy as cnp
 import numpy as np
 from cpython.mem cimport PyMem_Malloc, PyMem_Free

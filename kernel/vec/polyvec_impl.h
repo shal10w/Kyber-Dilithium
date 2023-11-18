@@ -58,10 +58,3 @@ inline polyvec<T>::~polyvec()
     }
     delete datavec;
 }
-template <typename T>
-inline void polyvec<T>::plus_mod(){
-    for(int i = 0 ; i < this->k ; i++){
-        this->datavec[i]->plus_mod();
-    }
-}
-

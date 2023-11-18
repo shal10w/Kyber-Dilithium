@@ -21,6 +21,8 @@ cdef class KyberVec:
         self._core.to_ntt()
     def to_poly(self):
         self._core.to_poly()
+    def mul(self , KyberPoly res , KyberVec b):
+        self._core.mul(res._core , b._core)
     def getpoly(self , nttflag):
         res = []
         if nttflag == 0:

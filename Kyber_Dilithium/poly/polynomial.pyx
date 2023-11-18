@@ -10,12 +10,10 @@ cdef class KyberPoly:
         else:
             temp = np.array(numlist , dtype = np.int16)
             self._core = new KyberPoly_c(<cnp.int16_t *>temp.data , nttflag , montflag)
-    @property
-    def polyarray(self):
-        return self._core.polyarray
-    @property
-    def nttarray(self):
-        return self._core.nttarray
+    def add(self , KyberPoly res , KyberPoly rvalue):
+        self._core.poly_add(res._core , rvalue._core)
+    def sub(self , KyberPoly res , KyberPoly rvalue):
+        self._core.poly_sub(res._core , rvalue._core)
     def __dealloc__(self):
         del self._core
     

@@ -14,7 +14,6 @@ cdef extern from "../../kernel/poly/Kyberpoly.h":
         void poly_sub(KyberPoly *a , KyberPoly *b)
         void to_poly()
         void to_ntt()
-        void plus_mod()
         void getpoly(int16_t *reslist)
 
 cdef extern from "../../kernel/poly/Dilithiumpoly.h":
@@ -39,7 +38,6 @@ cdef extern from "../../kernel/vec/polyvec.h":
         void add(polyvec *res , polyvec *rvalue)
         void to_poly()
         void to_ntt()
-        void plus_mod()
 
 cdef extern from "../../kernel/vec/polymat.h":
     cdef cppclass polymat[T]:
