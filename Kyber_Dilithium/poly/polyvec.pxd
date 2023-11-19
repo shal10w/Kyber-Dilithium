@@ -15,5 +15,6 @@ cdef class KyberVec:
 
 cdef class KyberMat:
     cdef polymat_c[KyberPoly_c] *_core
+    cdef int k
     cdef Matinit(self , list matlist , k)
 

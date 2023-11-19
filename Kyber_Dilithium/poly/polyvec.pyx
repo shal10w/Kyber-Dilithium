@@ -41,6 +41,7 @@ cdef class KyberVec:
 cdef class KyberMat:
     def __init__(self, matlist ,k):
         self.Matinit(matlist , k)
+        self.k = k
     cdef Matinit(self , list matlist , k):
         cdef polyvec_c[KyberPoly_c] ** a
         a = <polyvec_c[KyberPoly_c] **>PyMem_Malloc(k*sizeof(KyberPoly_c**))
@@ -50,7 +51,16 @@ cdef class KyberMat:
         PyMem_Free(a)
     def mul(self , KyberVec res , KyberVec b):
         self._core.right_mul(res._core , b._core)
-
+    def getpoly(self , nttflag):
+        res = []
+        if nttflag == 0:
+            for i in range(self.k):
+                res.append([self._core.veclist[i].datavec[j].polyarray for j in range(self.k)])
+            return res
+        else:
+            for i in range(self.k):
+                res.append([self._core.veclist[i].datavec[j].nttarray for j in range(self.k)])
+            return res
     def trans(self):
         self._core.trans()
     def __dealloc__(self):

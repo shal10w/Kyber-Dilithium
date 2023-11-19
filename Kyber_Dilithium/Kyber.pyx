@@ -12,7 +12,7 @@ class Kyber:
         self.q = 3329
         self.du = paramset["du"]
         self.dv = paramset["dv"]
-    def keygen(self , seed = None):
+    def cpakeygen(self , seed = None):
 
         # gen seed
         if seed == None:
@@ -24,7 +24,6 @@ class Kyber:
         # sample matrix and vector
         matA = gen_mat(rho , self.k)
         self.A = KyberMat(matA , self.k)
-    
         slist = []
         for i in range(self.k):
             slist.append(CBD(sigma+bytes([i]) , self.eta1))
@@ -37,14 +36,19 @@ class Kyber:
         e.to_ntt()
         self.t = KyberVec(None , self.k , 1)
         self.A.mul(self.t , self.s)
+        #self.t.to_poly()
+        #print(self.t.getpoly(0))
+        #self.t.to_ntt()
         self.t.add(self.t , e)
         # pack pk and sk
         pkarray = self.t.getpoly(1)
+        
         pk = b''
         for i in range(self.k):
             pk += Encode(plus_mod(pkarray[i] , self.q) , 12)
         pk += rho
         self.pk = pk
+        self.Hpk = hashlib.sha3_256(pk).digest()
 
         skarray = self.s.getpoly(1)
         sk = b''
@@ -62,12 +66,19 @@ class Kyber:
             t.append(Decode(tbuf[i*32*12:i*32*12 + 32*12] , 12))
         self.t = KyberVec(t , self.k , 1)
         self.pk = pk
+        self.Hpk = hashlib.sha3_256(pk).digest()
     def load_sk(self , sk):
         s = []
         for i in range(self.k):
             s.append(Decode(sk[i*32*12:i*32*12 + 32*12] , 12))
         self.s = KyberVec(s , self.k , 1)
-
+        if len(sk) != self.k*32*12:
+            sklen = self.k*32*12
+            pklen = self.k*32*12+32
+            pk = sk[sklen:sklen+pklen]
+            self.load_pk(pk)
+            self.Hpk = sk[sklen+pklen:sklen+pklen+32]
+            self.z = sk[-32:]
     def cpaenc(self , m , rseed):
 
         # sample
@@ -107,9 +118,9 @@ class Kyber:
         c1 = b''
         for i in c1list:
             c1 += Encode(i , self.du)
-        
         c2 = Compress(self.q , v._core.polyarray , self.dv)
         c2 = Encode(c2 , self.dv)
+        
         return c1 + c2
 
     def cpadec(self , c):
@@ -135,8 +146,32 @@ class Kyber:
         mpoly.to_poly()
         v.sub(mpoly , mpoly)
         m = Compress(self.q , mpoly._core.polyarray , 1)
-        print(m)
         m = Encode(m , 1)
         return m
-        
-        
+    
+    def keygen(self):
+        z = os.urandom(32)
+        pk ,sk1 = self.cpakeygen()
+        sk = sk1 + pk + hashlib.sha3_256(pk).digest() + z
+        self.load_sk(sk)
+        return pk , sk
+    
+    def kemenc(self , Klen = 128):
+        m = os.urandom(32)
+        m = hashlib.sha3_256(m).digest()
+        temp = hashlib.sha3_512(m + self.Hpk).digest()
+        _K , r = temp[:32] , temp[32:]
+        c = self.cpaenc(m , r)
+        K = hashlib.shake_256(_K + hashlib.sha3_256(c).digest()).digest(Klen//8)
+        return c , K
+    
+    def kemdec(self, c, Klen = 128):
+        _m = self.cpadec(c)
+        temp = hashlib.sha3_512(_m + self.Hpk).digest()
+        __K , _r = temp[:32] , temp[32:]
+        _c = self.cpaenc(_m , _r)
+        if _c == c:
+            K = hashlib.shake_256(__K + hashlib.sha3_256(c).digest()).digest(Klen//8)
+        else:
+            K = hashlib.shake_256(self.z + hashlib.sha3_256(c).digest()).digest(Klen//8)
+        return K

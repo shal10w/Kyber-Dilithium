@@ -13,6 +13,7 @@ bdcy(){
 build(){
     bdmk
     bdcy
+    cp ./test/Kyber_test.py ./build/lib.linux-x86_64-3.9/Kyber_test.py
 }
 clean(){
     rm -r build

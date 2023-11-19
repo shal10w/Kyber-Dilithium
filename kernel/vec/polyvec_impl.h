@@ -26,7 +26,7 @@ template <typename T>
 inline void polyvec<T>::mul(T *res, polyvec *rvalue){
     T *mid = new T(0 , 1, 1);
     for(int i = 0 ; i < k;i++){
-        mid->mul(this->datavec[i] , rvalue->datavec[i]);
+        this->datavec[i]->mul(mid , rvalue->datavec[i]);
         res->poly_add(res , mid);
     }
     delete mid;
