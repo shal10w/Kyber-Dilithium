@@ -38,6 +38,12 @@ inline void polyvec<T>::add(polyvec *res, polyvec *rvalue){
     }
 }
 template <typename T>
+inline void polyvec<T>::sub(polyvec *res, polyvec *rvalue){
+    for(int i = 0 ; i < k ; i++){
+        this->datavec[i]->poly_sub(res->datavec[i] , rvalue->datavec[i]);
+    }
+}
+template <typename T>
 inline void polyvec<T>::to_poly()
 {
     for(int i = 0 ; i < k ; i++){

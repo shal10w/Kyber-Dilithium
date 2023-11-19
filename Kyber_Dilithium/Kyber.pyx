@@ -43,17 +43,13 @@ class Kyber:
         # pack pk and sk
         pkarray = self.t.getpoly(1)
         
-        pk = b''
-        for i in range(self.k):
-            pk += Encode(plus_mod(pkarray[i] , self.q) , 12)
+        pk = pack_vec(pkarray , self.k , 12 , self.q)
         pk += rho
         self.pk = pk
         self.Hpk = hashlib.sha3_256(pk).digest()
 
         skarray = self.s.getpoly(1)
-        sk = b''
-        for i in range(self.k):
-            sk += Encode(plus_mod(skarray[i] , self.q) , 12)
+        sk = pack_vec(skarray , self.k , 12 , self.q)
         return pk , sk
     
     def load_pk(self , pk):
@@ -61,17 +57,16 @@ class Kyber:
         tbuf = pk[:-32]
         matA = gen_mat(rho , self.k)
         self.A = KyberMat(matA , self.k)
-        t = []
-        for i in range(self.k):
-            t.append(Decode(tbuf[i*32*12:i*32*12 + 32*12] , 12))
+
+        t = unpack_vec(tbuf , self.k , 12)
         self.t = KyberVec(t , self.k , 1)
+
         self.pk = pk
         self.Hpk = hashlib.sha3_256(pk).digest()
     def load_sk(self , sk):
-        s = []
-        for i in range(self.k):
-            s.append(Decode(sk[i*32*12:i*32*12 + 32*12] , 12))
+        s = unpack_vec(sk , self.k , 12)
         self.s = KyberVec(s , self.k , 1)
+
         if len(sk) != self.k*32*12:
             sklen = self.k*32*12
             pklen = self.k*32*12+32
@@ -115,9 +110,7 @@ class Kyber:
         v.add(v , mpoly)
         # pack cipher
         c1list = [Compress(self.q , i , self.du) for i in u.getpoly(0)]
-        c1 = b''
-        for i in c1list:
-            c1 += Encode(i , self.du)
+        c1 = pack_vec(c1list , self.k , self.du , 0)
         c2 = Compress(self.q , v._core.polyarray , self.dv)
         c2 = Encode(c2 , self.dv)
         
@@ -131,7 +124,7 @@ class Kyber:
         c1 , c2 = c[:-c2len] , c[-c2len:]
 
         # load c
-        ulist = [Decode(c1[i*c1len:i*c1len+c1len] , self.du) for i in range(self.k)]
+        ulist = unpack_vec(c1 , self.k , self.du)
         ulist = [Decompress(self.q , ulist[i] , self.du) for i in range(self.k)]
         u = KyberVec(ulist ,self.k, 0)
 

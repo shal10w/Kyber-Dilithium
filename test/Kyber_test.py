@@ -41,3 +41,14 @@ print("Alice generate Kmsg", Kmsg)
 m = Bob(sk , Kmsg , c)
 
 print("Bob decrypt and get" , m)
+
+# speed test
+import tqdm
+for i in tqdm.tqdm(range(10000)):
+    k.keygen()
+
+for i in tqdm.tqdm(range(10000)):
+    k.kemenc()
+
+for i in tqdm.tqdm(range(10000)):
+    k.kemdec(c)

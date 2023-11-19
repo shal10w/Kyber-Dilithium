@@ -119,3 +119,19 @@ cdef list Decompress(int q , list vec ,int d):
         res.append(round(i*q/module))
     return res
 
+cdef bytes pack_vec(list vec , int k , int d , int q):
+    cdef bytes res
+    res = b''
+    for i in range(k):
+        if q != 0:
+            res += Encode(plus_mod(vec[i] , q) , d)
+        else:
+            res += Encode(vec[i] , d)
+    return res
+
+cdef list unpack_vec(bytes buf , int k , int d):
+    cdef list res
+    res = []
+    for i in range(k):
+        res.append(Decode(buf[i*32*d:i*32*d+32*d] , d))
+    return res
