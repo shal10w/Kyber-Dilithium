@@ -60,6 +60,7 @@ cdef list ExpandMask(bytes seed , int kapa , int l , int loggamma):
         buf = shake.digest((loggamma+1)*32)
         bitlist = BytesToBits(buf)
         line = []
+        pos = 0
         for j in range(256):
             temp = 0
             for k in range(loggamma):
@@ -72,24 +73,25 @@ cdef list ExpandMask(bytes seed , int kapa , int l , int loggamma):
 
 cdef Decompose(list r ,int a):
     cdef list r1 , r0
-    cdef int p2_module , _p2
+    cdef int a_2
     cdef int q , r0int , r1int
-    p2_module = a
-    _p2 = a // 2
     q = 8380417
     r1 = []
     r0 = []
+    a_2 = a//2
     for i in r:
         if i < 0:
             r1int = i + q
         else:
             r1int = i
-        r0int = (r1int % p2_module) - _p2
+        r0int = (r1int % a)
+        if r0int > a_2:
+            r0int -= a
         if r1int - r0int == q-1:
             r1.append(0)
             r0.append(r0int-1)
         else:
-            r1.append((r1int-r0int)//p2_module)
+            r1.append((r1int-r0int)//a)
             r0.append(r0int)
     return r1 , r0
 cdef Power2Round(list r ,int d):
@@ -115,7 +117,7 @@ cdef list unpack_vec(bytes buf , int k , int bit , int flag):
     for i in range(k):
         if flag == 1:
             temp = Decode(buf[i*32*(bit+1):i*32*(bit+1)+32*(bit+1)] ,bit+1)
-            res.append([2**bit-1-j for j in temp])
+            res.append([(1<<bit)-1-j for j in temp])
         else:
             res.append(Decode(buf[i*32*bit:i*32*bit+32*bit] , bit))
     return res
@@ -154,3 +156,47 @@ cdef int inf_norm(list vec):
             elif -i[j] > res:
                 res = -i[j]
     return res
+
+cdef tuple MakeHint(list z , list r , int a):
+    cdef list r1 , v1 , res , line
+    cdef int cnt 
+    res = []
+    cnt = 0
+    for i in range(len(z)):
+        r1 = HighBits(r[i] , a)
+        v1 = HighBits(z[i] , a)
+        line = []
+        for j in range(256):
+            if r1[j] == v1[j]:
+                line.append(0)
+            else:
+                line.append(1)
+                cnt += 1
+        res.append(line)
+    return res , cnt
+
+cdef list UseHint(list h , list r , int a):
+    cdef int m 
+    cdef list res , r0 , r1
+    m = 8380416//a
+    res = []
+    for i in range(len(r)):
+        r1 , r0 = Decompose(r[i] , a)
+        for j in range(256):
+            if h[i][j] == 1:
+                if r0[j] > 0:
+                    r1[j] = (r1[j] + 1) % m
+                else:
+                    r1[j] = (r1[j] - 1) % m
+        res.append(r1)
+    return res
+
+cdef int cnt_one(list h):
+    cdef cnt , hlen
+    hlen = len(h)
+    cnt = 0
+    for i in range(hlen):
+        for j in range(256):
+            if h[i][j] == 1:
+                cnt += 1
+    return cnt

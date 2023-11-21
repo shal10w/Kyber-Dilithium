@@ -36,6 +36,7 @@ cdef extern from "../../kernel/vec/polyvec.h":
         void reset(int nttflag , int montflag)
         void mul(T*res , polyvec* rvalue)
         void add(polyvec *res , polyvec *rvalue)
+        void sub(polyvec *res , polyvec *rvalue)
         void to_poly()
         void to_ntt()
 

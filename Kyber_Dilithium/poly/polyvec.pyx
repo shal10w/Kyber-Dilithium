@@ -47,7 +47,7 @@ cdef class KyberMat:
         a = <polyvec_c[KyberPoly_c] **>PyMem_Malloc(k*sizeof(KyberPoly_c**))
         for i in range(k):
             Kybervecinit(a,i , matlist[i] , k , 1)
-        self._core = new polymat_c[KyberPoly_c](a , self.k)
+        self._core = new polymat_c[KyberPoly_c](a , k)
         PyMem_Free(a)
     def mul(self , KyberVec res , KyberVec b):
         self._core.right_mul(res._core , b._core)
@@ -95,7 +95,7 @@ cdef class DilithiumVec:
         self._core.mul(res._core , b._core)
     def polymul(self , DilithiumVec res , DilithiumPoly b):
         for i in range(self.k):
-            self._core.datavec[i].mul(res._core.datavec[i] , b)
+            self._core.datavec[i].mul(res._core.datavec[i] , b._core)
     def getpoly(self , nttflag):
         res = []
         if nttflag == 0:

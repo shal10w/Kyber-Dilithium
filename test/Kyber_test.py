@@ -1,6 +1,5 @@
 from Crypto.Cipher import AES
 from Kyber_Dilithium.Kyber import Kyber
-import os
 paramset = {
     "q":3329,
     "k":2,
@@ -15,7 +14,6 @@ def Alice(pk):
     AliceKyber = Kyber(paramset)
     AliceKyber.load_pk(pk)
     Kmsg, K = AliceKyber.kemenc()
-    print()
     aes = AES.new(key = K , mode = AES.MODE_ECB)
     c = aes.encrypt(secret)
     return Kmsg , c
@@ -29,20 +27,31 @@ def Bob(sk , Kmsg , c):
     return m
 k = Kyber(paramset)
 
+print("start keygen")
+print("--------------------------------------")
 pk , sk = k.keygen()
-#print("pk:({})".format(len(pk)) , pk)
-#print("sk:({})".format(len(sk)) , sk)
+print("complete, get")
+print("--------------------------------------")
+print("pk:({})\n".format(len(pk)) , pk)
+print("--------------------------------------")
+print("sk:({})\n".format(len(sk)) , sk)
+print("--------------------------------------")
 
+print("Alice start encrypt")
+print("--------------------------------------")
 Kmsg , c = Alice(pk)
 
-print("Alice generate Kmsg", Kmsg)
-#print("Alice generate c" , c)
-
+print("Alice generate Kmsg:({})\n".format(len(Kmsg)), Kmsg)
+print("--------------------------------------")
+print("Alice generate c:({})\n".format(len(c)) , c)
+print("--------------------------------------")
 m = Bob(sk , Kmsg , c)
-
+print("Bob start decrypt")
+print("--------------------------------------")
 print("Bob decrypt and get" , m)
 
-# speed test
+print("--------------------------------------")
+print("speed test")
 import tqdm
 for i in tqdm.tqdm(range(10000)):
     k.keygen()
@@ -51,4 +60,10 @@ for i in tqdm.tqdm(range(10000)):
     k.kemenc()
 
 for i in tqdm.tqdm(range(10000)):
-    k.kemdec(c)
+    k.kemdec(Kmsg)
+
+'''
+10000/10000 [00:33<00:00, 298.86it/s]
+10000/10000 [00:15<00:00, 641.22it/s]
+10000/10000 [00:21<00:00, 455.42it/s]
+'''
