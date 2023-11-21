@@ -2,8 +2,7 @@
 
 my homework of Modern Cryptography.
 
-implementation of Kyber and Dilithium
-
+implementation of Kyber and Dilithium.
 
 ## build
 
@@ -20,6 +19,6 @@ compile
 ```
 test
 ```sh
-python ./build/Kyber_Dilithium/Kyber_test.py
-python ./build/Kyber_Dilithium/Dilithium_test.py
+python ./build/Kyber_test.py
+python ./build/Dilithium_test.py
 ```
